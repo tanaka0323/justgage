@@ -137,14 +137,14 @@
         showMinMax : false,
         label: "",
         title: " ",
-        donut: true
+        shape: 2
       });
 
       function reload(gid) {
         var id = gid.config.id;
         var title = gid.config.title;
         var label = gid.config.label;
-        var donut = gid.config.donut;
+        var shape = gid.config.shape;
         var symbol = gid.config.symbol;
         var showMinMax = gid.config.showMinMax;
         if($('#'+ id + '_gaugevalue') != null ) { var gaugevalue = $('#'+ id + '_gaugevalue').attr('value'); } else { var gaugevalue = 0; }
@@ -168,7 +168,7 @@
           showMinMax : showMinMax ,
           title: title,
           label: label,
-          donut: donut
+          shape: shape
         });
 
         $('#' + id + '_refresh').bind('click', function() {

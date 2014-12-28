@@ -10,7 +10,7 @@
  * March 16, 2014.
  * -----------------------------
      * fix - https://github.com/toorshia/justgage/issues/112
- * 
+ *
  * -----------------------------
  * February 16, 2014.
  * -----------------------------
@@ -267,9 +267,9 @@
     // whether to use gradual color change for value, or sector-based
     noGradient : obj.kvLookup('noGradient', config, dataset, false),
 
-    // donut : bool
-    // show full donut gauge
-    donut : obj.kvLookup('donut', config, dataset, false),
+    // shape : string
+    // 0:half 1:fan 2:donut
+    shape : obj.kvLookup('shape', config, dataset, 0),
 
     // relativeGaugeSize : bool
     // whether gauge size should follow changes in container element size
@@ -349,30 +349,138 @@
     canvasH = getStyle(document.getElementById(obj.config.id), "height").slice(0, -2) * 1;
   }
 
-  // widget dimensions
-  if (obj.config.donut === true) {
-
-    // DONUT *******************************
-
+  if (obj.config.shape === 0) {
+    // HALF *******************************
     // width more than height
     if(canvasW > canvasH) {
       widgetH = canvasH;
-      widgetW = widgetH;
+      widgetW = widgetH * 1.25;
+      //if width doesn't fit, rescale both
+      if (widgetW > canvasW) {
+        aspect = widgetW / canvasW;
+        widgetW = widgetW / aspect;
+        widgetH = widgetH / aspect;
+      }
     // width less than height
-  } else if (canvasW < canvasH) {
-    widgetW = canvasW;
-    widgetH = widgetW;
+    } else if (canvasW < canvasH) {
+      widgetW = canvasW;
+      widgetH = widgetW / 1.25;
       // if height don't fit, rescale both
-      if(widgetH > canvasH) {
+      if (widgetH > canvasH) {
         aspect = widgetH / canvasH;
         widgetH = widgetH / aspect;
         widgetW = widgetH / aspect;
       }
     // equal
+    } else {
+      widgetW = canvasW;
+      widgetH = widgetW * 0.75;
+    }
+
+    // delta
+    dx = (canvasW - widgetW)/2;
+    dy = (canvasH - widgetH)/2;
+
+    // title
+    titleFontSize = ((widgetH / 8) > obj.config.titleMinFontSize) ? (widgetH / 10) : obj.config.titleMinFontSize;
+    titleX = dx + widgetW / 2;
+    titleY = dy + widgetH / 6.4;
+
+    // value
+    valueFontSize = ((widgetH / 6.5) > obj.config.valueMinFontSize) ? (widgetH / 6.5) : obj.config.valueMinFontSize;
+    valueX = dx + widgetW / 2;
+    valueY = dy + widgetH / 1.275;
+
+    // label
+    labelFontSize = ((widgetH / 16) > obj.config.labelMinFontSize) ? (widgetH / 16) : obj.config.labelMinFontSize;
+    labelX = dx + widgetW / 2;
+    labelY = valueY + valueFontSize / 2 + 5;
+
+    // min
+    minFontSize = ((widgetH / 16) > obj.config.minLabelMinFontSize) ? (widgetH / 16) : obj.config.minLabelMinFontSize;
+    minX = dx + (widgetW / 10) + (widgetW / 6.666666666666667 * obj.config.gaugeWidthScale) / 2 ;
+    minY = labelY;
+
+    // max
+    maxFontSize = ((widgetH / 16) > obj.config.maxLabelMinFontSize) ? (widgetH / 16) : obj.config.maxLabelMinFontSize;
+    maxX = dx + widgetW - (widgetW / 10) - (widgetW / 6.666666666666667 * obj.config.gaugeWidthScale) / 2 ;
+    maxY = labelY;
+
+  } else if (obj.config.shape === 1) {
+    // fan *******************************
+    // width more than height
+    if(canvasW > canvasH) {
+      widgetH = canvasH;
+      widgetW = widgetH;
+    // width less than height
+    } else if (canvasW < canvasH) {
+      widgetW = canvasW;
+      widgetH = widgetW;
+      // if height don't fit, rescale both
+      if (widgetH > canvasH) {
+          aspect = widgetH / canvasH;
+          widgetH = widgetH / aspect;
+          widgetW = widgetH / aspect;
+      }
+    // equal
+    } else {
+      widgetW = canvasW;
+      widgetH = widgetW;
+    }
+
+    // delta
+    dx = (canvasW - widgetW)/2;
+    dy = (canvasH - widgetH)/2;
+
+    // title
+    titleFontSize = ((widgetH / 8) > 10) ? (widgetH / 10) : 10;
+    titleX = dx + widgetW / 2;
+    titleY = dy + widgetH / 11;
+
+    // value
+    valueFontSize = ((widgetH / 6.4) > 16) ? (widgetH / 5.4) : 18;
+    valueX = dx + widgetW / 2;
+    if(obj.config.label !== '') {
+      valueY = dy + widgetH / 1.85;
+    } else {
+      valueY = dy + widgetH / 1.7;
+    }
+
+    // label
+    labelFontSize = ((widgetH / 16) > 10) ? (widgetH / 16) : 10;
+    labelX = dx + widgetW / 2;
+    labelY = valueY + labelFontSize;
+
+    // min
+    minFontSize = ((widgetH / 16) > 10) ? (widgetH / 16) : 10;
+    minX = dx + (widgetW / 4) + (widgetW / 6.666666666666667 * obj.config.gaugeWidthScale) / 2 ;
+    minY = dy + widgetH / 1.275 + valueFontSize / 2;
+
+    // max
+    maxFontSize = ((widgetH / 16) > 10) ? (widgetH / 16) : 10;
+    maxX = dx + widgetW - (widgetW / 4) - (widgetW / 6.666666666666667 * obj.config.gaugeWidthScale) / 2 ;
+    maxY = minY;
   } else {
-    widgetW = canvasW;
-    widgetH = widgetW;
-  }
+    // DONUT *******************************
+    // width more than height
+    if(canvasW > canvasH) {
+      widgetH = canvasH;
+      widgetW = widgetH;
+    // width less than height
+    } else if (canvasW < canvasH) {
+      widgetW = canvasW;
+      widgetH = widgetW;
+      // if height don't fit, rescale both
+      if (widgetH > canvasH) {
+          aspect = widgetH / canvasH;
+          widgetH = widgetH / aspect;
+          widgetW = widgetH / aspect;
+      }
+    // equal
+    } else {
+      widgetW = canvasW;
+      widgetH = widgetW;
+    }
 
     // delta
     dx = (canvasW - widgetW)/2;
@@ -406,64 +514,6 @@
     maxFontSize = ((widgetH / 16) > 10) ? (widgetH / 16) : 10;
     maxX = dx + widgetW - (widgetW / 10) - (widgetW / 6.666666666666667 * obj.config.gaugeWidthScale) / 2 ;
     maxY = labelY;
-
-  } else {
-    // HALF *******************************
-
-    // width more than height
-    if(canvasW > canvasH) {
-      widgetH = canvasH;
-      widgetW = widgetH * 1.25;
-      //if width doesn't fit, rescale both
-      if(widgetW > canvasW) {
-        aspect = widgetW / canvasW;
-        widgetW = widgetW / aspect;
-        widgetH = widgetH / aspect;
-      }
-    // width less than height
-  } else if (canvasW < canvasH) {
-    widgetW = canvasW;
-    widgetH = widgetW / 1.25;
-      // if height don't fit, rescale both
-      if(widgetH > canvasH) {
-        aspect = widgetH / canvasH;
-        widgetH = widgetH / aspect;
-        widgetW = widgetH / aspect;
-      }
-    // equal
-  } else {
-    widgetW = canvasW;
-    widgetH = widgetW * 0.75;
-  }
-
-    // delta
-    dx = (canvasW - widgetW)/2;
-    dy = (canvasH - widgetH)/2;
-
-    // title
-    titleFontSize = ((widgetH / 8) > obj.config.titleMinFontSize) ? (widgetH / 10) : obj.config.titleMinFontSize;
-    titleX = dx + widgetW / 2;
-    titleY = dy + widgetH / 6.4;
-
-    // value
-    valueFontSize = ((widgetH / 6.5) > obj.config.valueMinFontSize) ? (widgetH / 6.5) : obj.config.valueMinFontSize;
-    valueX = dx + widgetW / 2;
-    valueY = dy + widgetH / 1.275;
-
-    // label
-    labelFontSize = ((widgetH / 16) > obj.config.labelMinFontSize) ? (widgetH / 16) : obj.config.labelMinFontSize;
-    labelX = dx + widgetW / 2;
-    labelY = valueY + valueFontSize / 2 + 5;
-
-    // min
-    minFontSize = ((widgetH / 16) > obj.config.minLabelMinFontSize) ? (widgetH / 16) : obj.config.minLabelMinFontSize;
-    minX = dx + (widgetW / 10) + (widgetW / 6.666666666666667 * obj.config.gaugeWidthScale) / 2 ;
-    minY = labelY;
-
-    // max
-    maxFontSize = ((widgetH / 16) > obj.config.maxLabelMinFontSize) ? (widgetH / 16) : obj.config.maxLabelMinFontSize;
-    maxX = dx + widgetW - (widgetW / 10) - (widgetW / 6.666666666666667 * obj.config.gaugeWidthScale) / 2 ;
-    maxY = labelY;
   }
 
   // parameters
@@ -495,39 +545,11 @@
   canvasW, canvasH, widgetW, widgetH, aspect, dx, dy, titleFontSize, titleX, titleY, valueFontSize, valueX, valueY, labelFontSize, labelX, labelY, minFontSize, minX, minY, maxFontSize, maxX, maxY = null;
 
   // pki - custom attribute for generating gauge paths
-  obj.canvas.customAttributes.pki = function (value, min, max, w, h, dx, dy, gws, donut) {
+  obj.canvas.customAttributes.pki = function (value, min, max, w, h, dx, dy, gws, shape) {
 
     var alpha, Ro, Ri, Cx, Cy, Xo, Yo, Xi, Yi, path;
 
-    if (donut) {
-      alpha = (1 - 2 * (value - min) / (max - min)) * Math.PI;
-      Ro = w / 2 - w / 7;
-      Ri = Ro - w / 6.666666666666667 * gws;
-
-      Cx = w / 2 + dx;
-      Cy = h / 1.95 + dy;
-
-      Xo = w / 2 + dx + Ro * Math.cos(alpha);
-      Yo = h - (h - Cy) - Ro * Math.sin(alpha);
-      Xi = w / 2 + dx + Ri * Math.cos(alpha);
-      Yi = h - (h - Cy) - Ri * Math.sin(alpha);
-
-      path = "M" + (Cx - Ri) + "," + Cy + " ";
-      path += "L" + (Cx - Ro) + "," + Cy + " ";
-      if (value > ((max - min) / 2)) {
-        path += "A" + Ro + "," + Ro + " 0 0 1 " + (Cx + Ro) + "," + Cy + " ";
-      }
-      path += "A" + Ro + "," + Ro + " 0 0 1 " + Xo + "," + Yo + " ";
-      path += "L" + Xi + "," + Yi + " ";
-      if (value > ((max - min) / 2)) {
-        path += "A" + Ri + "," + Ri + " 0 0 0 " + (Cx + Ri) + "," + Cy + " ";
-      }
-      path += "A" + Ri + "," + Ri + " 0 0 0 " + (Cx - Ri) + "," + Cy + " ";
-      path += "Z ";
-
-      return { path: path };
-
-    } else {
+    if (shape === 0) {
       alpha = (1 - (value - min) / (max - min)) * Math.PI;
       Ro = w / 2 - w / 10;
       Ri = Ro - w / 6.666666666666667 * gws;
@@ -544,6 +566,62 @@
       path += "L" + (Cx - Ro) + "," + Cy + " ";
       path += "A" + Ro + "," + Ro + " 0 0 1 " + Xo + "," + Yo + " ";
       path += "L" + Xi + "," + Yi + " ";
+      path += "A" + Ri + "," + Ri + " 0 0 0 " + (Cx - Ri) + "," + Cy + " ";
+      path += "Z ";
+
+      return { path: path };
+
+    } else if (shape === 1) {
+      alpha = (1 - 1.5 * (value - min) / (max - min)) * Math.PI;
+      Ro = w / 2 - w / 7;
+      Ri = Ro - w / 6.666666666666667 * gws;
+
+      Cx = w / 2 + dx;
+      Cy = h / 1.95 + dy;
+
+      Xo = w / 2 + dx + Ro * Math.cos(alpha);
+      Yo = h - (h - Cy) - Ro * Math.sin(alpha);
+      Xi = w / 2 + dx + Ri * Math.cos(alpha);
+      Yi = h - (h - Cy) - Ri * Math.sin(alpha);
+
+      path = "M" + (Cx - Ri) + "," + Cy + " ";
+      path += "L" + (Cx - Ro) + "," + Cy + " ";
+      if (value > ((max - min) / 1.5)) {
+          path += "A" + Ro + "," + Ro + " 0 0 1 " + (Cx + Ro) + "," + Cy + " ";
+      }
+      path += "A" + Ro + "," + Ro + " 0 0 1 " + Xo + "," + Yo + " ";
+      path += "L" + Xi + "," + Yi + " ";
+      if (value > ((max - min) / 1.5)) {
+          path += "A" + Ri + "," + Ri + " 0 0 0 " + (Cx + Ri) + "," + Cy + " ";
+      }
+      path += "A" + Ri + "," + Ri + " 0 0 0 " + (Cx - Ri) + "," + Cy + " ";
+      path += "Z ";
+
+      return { path: path };
+
+    } else {
+      alpha = (1 - 2 * (value - min) / (max - min)) * Math.PI;
+      Ro = w / 2 - w / 7;
+      Ri = Ro - w / 6.666666666666667 * gws;
+
+      Cx = w / 2 + dx;
+      Cy = h / 1.95 + dy;
+
+      Xo = w / 2 + dx + Ro * Math.cos(alpha);
+      Yo = h - (h - Cy) - Ro * Math.sin(alpha);
+      Xi = w / 2 + dx + Ri * Math.cos(alpha);
+      Yi = h - (h - Cy) - Ri * Math.sin(alpha);
+
+      path = "M" + (Cx - Ri) + "," + Cy + " ";
+      path += "L" + (Cx - Ro) + "," + Cy + " ";
+      if (value > ((max - min) / 2)) {
+          path += "A" + Ro + "," + Ro + " 0 0 1 " + (Cx + Ro) + "," + Cy + " ";
+      }
+      path += "A" + Ro + "," + Ro + " 0 0 1 " + Xo + "," + Yo + " ";
+      path += "L" + Xi + "," + Yi + " ";
+      if (value > ((max - min) / 2)) {
+          path += "A" + Ri + "," + Ri + " 0 0 0 " + (Cx + Ri) + "," + Cy + " ";
+      }
       path += "A" + Ri + "," + Ri + " 0 0 0 " + (Cx - Ri) + "," + Cy + " ";
       path += "Z ";
 
@@ -567,7 +645,7 @@
         obj.params.dx,
         obj.params.dy,
         obj.config.gaugeWidthScale,
-        obj.config.donut
+        obj.config.shape
       ]
   });
 
@@ -584,10 +662,15 @@
       obj.params.dx,
       obj.params.dy,
       obj.config.gaugeWidthScale,
-      obj.config.donut
+      obj.config.shape
     ]
   });
-  if(obj.config.donut) {
+  if (obj.config.shape === 0) {
+    ;
+  } else if (obj.config.shape === 1) {
+    obj.gauge.transform("r" + -45);
+    obj.level.transform("r" + -45 + ", " + (obj.params.widgetW/2 + obj.params.dx) + ", " + (obj.params.widgetH/1.95 + obj.params.dy));
+  } else {
     obj.level.transform("r" + obj.config.donutStartAngle + ", " + (obj.params.widgetW/2 + obj.params.dx) + ", " + (obj.params.widgetH/1.95 + obj.params.dy));
   }
 
@@ -637,7 +720,7 @@
     "font-weight":"normal",
     "font-family":"Arial",
     "fill":obj.config.labelFontColor,
-    "fill-opacity": (obj.config.hideMinMax || obj.config.donut)? "0" : "1"
+    "fill-opacity": (obj.config.hideMinMax || (obj.config.shape == 2))? "0" : "1"
   });
   setDy(obj.txtMin, obj.params.minFontSize, obj.params.minY);
 
@@ -654,7 +737,7 @@
     "font-weight":"normal",
     "font-family":"Arial",
     "fill":obj.config.labelFontColor,
-    "fill-opacity": (obj.config.hideMinMax || obj.config.donut)? "0" : "1"
+    "fill-opacity": (obj.config.hideMinMax || (obj.config.shape == 2))? "0" : "1"
   });
   setDy(obj.txtMax, obj.params.maxFontSize, obj.params.maxY);
 
@@ -726,7 +809,7 @@
       obj.params.dx,
       obj.params.dy,
       obj.config.gaugeWidthScale,
-      obj.config.donut
+      obj.config.shape
     ]
   }, obj.config.startAnimationTime, obj.config.startAnimationType);
   obj.txtValue.animate({"fill-opacity":(obj.config.hideValue)?"0":"1"}, obj.config.startAnimationTime, obj.config.startAnimationType);
@@ -829,7 +912,7 @@ JustGage.prototype.refresh = function(val, max) {
       obj.params.dx,
       obj.params.dy,
       obj.config.gaugeWidthScale,
-      obj.config.donut
+      obj.config.shape
     ],
     "fill":color
   },  obj.config.refreshAnimationTime, obj.config.refreshAnimationType);
