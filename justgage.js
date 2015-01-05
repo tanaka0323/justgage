@@ -689,7 +689,7 @@
   obj.txtTitle.attr({
     "font-size":obj.params.titleFontSize,
     "font-weight":"bold",
-    "font-family":"Arial",
+    "font-family":obj.config.labelFontFamily,
     "fill":obj.config.titleFontColor,
     "fill-opacity":"1"
   });
@@ -700,7 +700,7 @@
   obj.txtValue.attr({
     "font-size":obj.params.valueFontSize,
     "font-weight":"bold",
-    "font-family":"Arial",
+    "font-family":obj.config.labelFontFamily,
     "fill":obj.config.valueFontColor,
     "fill-opacity":"0"
   });
@@ -711,7 +711,7 @@
   obj.txtLabel.attr({
     "font-size":obj.params.labelFontSize,
     "font-weight":"normal",
-    "font-family":"Arial",
+    "font-family":obj.config.labelFontFamily,
     "fill":obj.config.labelFontColor,
     "fill-opacity":"0"
   });
@@ -728,7 +728,7 @@
   obj.txtMin.attr({
     "font-size":obj.params.minFontSize,
     "font-weight":"normal",
-    "font-family":"Arial",
+    "font-family":obj.config.labelFontFamily,
     "fill":obj.config.labelFontColor,
     "fill-opacity": (obj.config.hideMinMax || (obj.config.shape == 2))? "0" : "1"
   });
@@ -745,7 +745,7 @@
   obj.txtMax.attr({
     "font-size":obj.params.maxFontSize,
     "font-weight":"normal",
-    "font-family":"Arial",
+    "font-family":obj.config.labelFontFamily,
     "fill":obj.config.labelFontColor,
     "fill-opacity": (obj.config.hideMinMax || (obj.config.shape == 2))? "0" : "1"
   });
