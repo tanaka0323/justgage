@@ -7,6 +7,13 @@
  * LATEST UPDATES
  *
  * -----------------------------
+ * Jan 5, 2014.
+ * -----------------------------
+     * donut - donut property removed
+     * shape - shape property added
+     * labelFontFamily - labelFontFamily property added
+ *
+ * -----------------------------
  * March 16, 2014.
  * -----------------------------
      * fix - https://github.com/toorshia/justgage/issues/112
@@ -190,6 +197,9 @@
     // labelFontColor : string
     // color of label showing label under value
     labelFontColor : obj.kvLookup('labelFontColor', config, dataset, "#b3b3b3"),
+
+    // labelFontFamily : string
+    labelFontFamily : obj.kvLookup('labelFontFamily', config, dataset, "Arial"),
 
     // shadowOpacity : int
     // 0 ~ 1
