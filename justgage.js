@@ -688,7 +688,7 @@
   obj.txtTitle = obj.canvas.text(obj.params.titleX, obj.params.titleY, obj.config.title);
   obj.txtTitle.attr({
     "font-size":obj.params.titleFontSize,
-    "font-weight":"bold",
+    "font-weight":"normal",
     "font-family":obj.config.labelFontFamily,
     "fill":obj.config.titleFontColor,
     "fill-opacity":"1"
@@ -699,7 +699,7 @@
   obj.txtValue = obj.canvas.text(obj.params.valueX, obj.params.valueY, 0);
   obj.txtValue.attr({
     "font-size":obj.params.valueFontSize,
-    "font-weight":"bold",
+    "font-weight":"normal",
     "font-family":obj.config.labelFontFamily,
     "fill":obj.config.valueFontColor,
     "fill-opacity":"0"
