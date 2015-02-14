@@ -7,7 +7,13 @@
  * LATEST UPDATES
  *
  * -----------------------------
- * Jan 5, 2014.
+ * Feb 14, 2015.
+ * -----------------------------
+     * labelFontFamily - labelFontFamily property remove
+     * labelClass - labelClass property added
+ *
+ * -----------------------------
+ * Jan 5, 2015.
  * -----------------------------
      * donut - donut property removed
      * shape - shape property added
@@ -197,8 +203,8 @@ JustGage = function(config) {
         // color of label showing label under value
         labelFontColor : obj.kvLookup('labelFontColor', config, dataset, "#b3b3b3"),
 
-        // labelFontFamily : string
-        labelFontFamily : obj.kvLookup('labelFontFamily', config, dataset, "Arial"),
+        // labelClass : string
+        labelClass : obj.kvLookup('labelClass', config, dataset, ""),
 
         // shadowOpacity : int
         // 0 ~ 1
@@ -325,6 +331,12 @@ JustGage = function(config) {
     maxFontSize,
     maxX,
     maxY;
+
+    // Raphael add class support
+    Raphael.el.addClass = function(className) {
+        this.node.setAttribute("class", className);
+        return this;
+    };
 
     // overflow values
     if (obj.config.value > obj.config.max)
@@ -460,7 +472,7 @@ JustGage = function(config) {
         // label
         labelFontSize = ((widgetH / 16) > 10) ? (widgetH / 16) : 10;
         labelX = dx + widgetW / 2;
-        labelY = valueY + labelFontSize;
+        labelY = valueY + valueFontSize / 2;
 
         // min
         minFontSize = ((widgetH / 16) > 10) ? (widgetH / 16) : 10;
@@ -514,7 +526,7 @@ JustGage = function(config) {
         // label
         labelFontSize = ((widgetH / 16) > 10) ? (widgetH / 16) : 10;
         labelX = dx + widgetW / 2;
-        labelY = valueY + labelFontSize;
+        labelY = valueY + valueFontSize / 2;
 
         // min
         minFontSize = ((widgetH / 16) > 10) ? (widgetH / 16) : 10;
@@ -693,34 +705,35 @@ JustGage = function(config) {
     // title
     obj.txtTitle = obj.canvas.text(obj.params.titleX, obj.params.titleY, obj.config.title);
     obj.txtTitle.attr({
+        "font":"",
         "font-size":obj.params.titleFontSize,
-        "font-weight":"normal",
-        "font-family":obj.config.labelFontFamily,
         "fill":obj.config.titleFontColor,
         "fill-opacity":"1"
     });
+    obj.txtTitle.addClass(obj.config.labelClass);
+
     setDy(obj.txtTitle, obj.params.titleFontSize, obj.params.titleY);
 
     // value
     obj.txtValue = obj.canvas.text(obj.params.valueX, obj.params.valueY, 0);
     obj.txtValue.attr({
+        "font":"",
         "font-size":obj.params.valueFontSize,
-        "font-weight":"normal",
-        "font-family":obj.config.labelFontFamily,
         "fill":obj.config.valueFontColor,
         "fill-opacity":"0"
     });
+    obj.txtValue.addClass(obj.config.labelClass);
     setDy(obj.txtValue, obj.params.valueFontSize, obj.params.valueY);
 
     // label
     obj.txtLabel = obj.canvas.text(obj.params.labelX, obj.params.labelY, obj.config.label);
     obj.txtLabel.attr({
+        "font":"",
         "font-size":obj.params.labelFontSize,
-        "font-weight":"normal",
-        "font-family":obj.config.labelFontFamily,
         "fill":obj.config.labelFontColor,
         "fill-opacity":"0"
     });
+    obj.txtLabel.addClass(obj.config.labelClass);
     setDy(obj.txtLabel, obj.params.labelFontSize, obj.params.labelY);
 
     // min
@@ -732,12 +745,12 @@ JustGage = function(config) {
     }
     obj.txtMin = obj.canvas.text(obj.params.minX, obj.params.minY, obj.txtMinimum);
     obj.txtMin.attr({
+        "font":"",
         "font-size":obj.params.minFontSize,
-        "font-weight":"normal",
-        "font-family":obj.config.labelFontFamily,
         "fill":obj.config.labelFontColor,
         "fill-opacity": (obj.config.hideMinMax || (obj.config.shape == 2))? "0" : "1"
     });
+    obj.txtMin.addClass(obj.config.labelClass);
     setDy(obj.txtMin, obj.params.minFontSize, obj.params.minY);
 
     // max
@@ -749,12 +762,12 @@ JustGage = function(config) {
     }
     obj.txtMax = obj.canvas.text(obj.params.maxX, obj.params.maxY, obj.txtMaximum);
     obj.txtMax.attr({
+        "font":"",
         "font-size":obj.params.maxFontSize,
-        "font-weight":"normal",
-        "font-family":obj.config.labelFontFamily,
         "fill":obj.config.labelFontColor,
         "fill-opacity": (obj.config.hideMinMax || (obj.config.shape == 2))? "0" : "1"
     });
+    obj.txtMax.addClass(obj.config.labelClass);
     setDy(obj.txtMax, obj.params.maxFontSize, obj.params.maxY);
 
     var defs = obj.canvas.canvas.childNodes[1];
